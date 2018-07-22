@@ -26,6 +26,33 @@
 
 static uint8_t char_lookup[10] = {CHAR_0, CHAR_1, CHAR_2, CHAR_3, CHAR_4, CHAR_5, CHAR_6, CHAR_7, CHAR_8, CHAR_9};
 uint8_t characters[4];
+uint8_t segment;
+
+void display_init(void)
+{
+    //Initialize segment counter
+    segment = 0;
+    
+    //Initialize character arrray
+    characters[0] = CHAR_0;
+    characters[1] = CHAR_0;
+    characters[2] = CHAR_0;
+    characters[3] = CHAR_0;
+    
+    //Configure timer 2
+    T2CLKCONbits.CS = 0b0001; //Clock source Fosc/4 (8MHz)
+    T2CONbits.CKPS = 0b111; //Prescaler=128 (62.5kHz)
+    PR2 = 125; // Period=125 (500Hz)
+    T2CONbits.OUTPS = 0b0000; //Postscaler=1
+    
+    //Configure corresponding interrupts
+    INTCONbits.GIE = 1; //Enable interrupts
+    INTCONbits.PEIE = 1; //Enable peripheral interrupts
+    PIE4bits.TMR2IE = 1; //Enable timer2 interrupts
+    
+    //Enable timer 2
+    T2CONbits.ON = 1;
+}
 
 void display_set(uint16_t value)
 {
@@ -42,7 +69,7 @@ void display_set(uint16_t value)
     characters[0] = char_lookup[value%10];
 }
 
-inline void display_update(uint8_t segment)
+inline void display_update()
 {
     DISPLAY_SEG1_PIN = 1;
     DISPLAY_SEG2_PIN = 1;
@@ -66,4 +93,6 @@ inline void display_update(uint8_t segment)
             DISPLAY_SEG4_PIN = 0; 
             break;
     }
+    
+    ++segment;
 }

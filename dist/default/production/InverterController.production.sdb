@@ -15,15 +15,57 @@
 [v _eecpymem eecpymem `(v  1 e 1 0 ]
 "39
 [v _memcpyee memcpyee `(v  1 e 1 0 ]
-"30 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
+"31 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
+[v _display_init display_init `(v  1 e 1 0 ]
+"57
 [v _display_set display_set `(v  1 e 1 0 ]
-"45
+"72
 [v _display_update display_update `T(v  1 e 1 0 ]
-"23 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\main.c
+"5 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\encoder.c
+[v _encoder_init encoder_init `(v  1 e 1 0 ]
+"22
+[v _encoder_isr encoder_isr `T(v  1 e 1 0 ]
+"25 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\main.c
 [v _main main `(v  1 e 1 0 ]
-"71
+"55
+[v __isr _isr `II(v  1 e 1 0 ]
+"76
 [v _system_init system_init `(v  1 e 1 0 ]
-[s S55 . 1 `uc 1 TRISA0 1 0 :1:0 
+"115
+[v _handle_relays handle_relays `(v  1 e 1 0 ]
+[s S439 . 1 `uc 1 INTEDG 1 0 :1:0 
+`uc 1 . 1 0 :5:1 
+`uc 1 PEIE 1 0 :1:6 
+`uc 1 GIE 1 0 :1:7 
+]
+"362 C:\Program Files (x86)\Microchip\xc8\v1.44\include\pic16f18855.h
+[u S444 . 1 `S439 1 . 1 0 ]
+[v _INTCONbits INTCONbits `VES444  1 e 1 @11 ]
+[s S189 . 1 `uc 1 RA0 1 0 :1:0 
+`uc 1 RA1 1 0 :1:1 
+`uc 1 RA2 1 0 :1:2 
+`uc 1 RA3 1 0 :1:3 
+`uc 1 RA4 1 0 :1:4 
+`uc 1 RA5 1 0 :1:5 
+`uc 1 RA6 1 0 :1:6 
+`uc 1 RA7 1 0 :1:7 
+]
+"399
+[u S198 . 1 `S189 1 . 1 0 ]
+[v _PORTAbits PORTAbits `VES198  1 e 1 @12 ]
+[s S231 . 1 `uc 1 RB0 1 0 :1:0 
+`uc 1 RB1 1 0 :1:1 
+`uc 1 RB2 1 0 :1:2 
+`uc 1 RB3 1 0 :1:3 
+`uc 1 RB4 1 0 :1:4 
+`uc 1 RB5 1 0 :1:5 
+`uc 1 RB6 1 0 :1:6 
+`uc 1 RB7 1 0 :1:7 
+]
+"461
+[u S240 . 1 `S231 1 . 1 0 ]
+[v _PORTBbits PORTBbits `VES240  1 e 1 @13 ]
+[s S76 . 1 `uc 1 TRISA0 1 0 :1:0 
 `uc 1 TRISA1 1 0 :1:1 
 `uc 1 TRISA2 1 0 :1:2 
 `uc 1 TRISA3 1 0 :1:3 
@@ -32,10 +74,10 @@
 `uc 1 TRISA6 1 0 :1:6 
 `uc 1 TRISA7 1 0 :1:7 
 ]
-"606 C:\Program Files (x86)\Microchip\xc8\v1.44\include\pic16f18855.h
-[u S64 . 1 `S55 1 . 1 0 ]
-[v _TRISAbits TRISAbits `VES64  1 e 1 @17 ]
-[s S97 . 1 `uc 1 TRISB0 1 0 :1:0 
+"606
+[u S85 . 1 `S76 1 . 1 0 ]
+[v _TRISAbits TRISAbits `VES85  1 e 1 @17 ]
+[s S139 . 1 `uc 1 TRISB0 1 0 :1:0 
 `uc 1 TRISB1 1 0 :1:1 
 `uc 1 TRISB2 1 0 :1:2 
 `uc 1 TRISB3 1 0 :1:3 
@@ -45,9 +87,9 @@
 `uc 1 TRISB7 1 0 :1:7 
 ]
 "668
-[u S106 . 1 `S97 1 . 1 0 ]
-[v _TRISBbits TRISBbits `VES106  1 e 1 @18 ]
-[s S76 . 1 `uc 1 TRISC0 1 0 :1:0 
+[u S148 . 1 `S139 1 . 1 0 ]
+[v _TRISBbits TRISBbits `VES148  1 e 1 @18 ]
+[s S118 . 1 `uc 1 TRISC0 1 0 :1:0 
 `uc 1 TRISC1 1 0 :1:1 
 `uc 1 TRISC2 1 0 :1:2 
 `uc 1 TRISC3 1 0 :1:3 
@@ -57,9 +99,9 @@
 `uc 1 TRISC7 1 0 :1:7 
 ]
 "730
-[u S85 . 1 `S76 1 . 1 0 ]
-[v _TRISCbits TRISCbits `VES85  1 e 1 @19 ]
-[s S23 . 1 `uc 1 LATA0 1 0 :1:0 
+[u S127 . 1 `S118 1 . 1 0 ]
+[v _TRISCbits TRISCbits `VES127  1 e 1 @19 ]
+[s S210 . 1 `uc 1 LATA0 1 0 :1:0 
 `uc 1 LATA1 1 0 :1:1 
 `uc 1 LATA2 1 0 :1:2 
 `uc 1 LATA3 1 0 :1:3 
@@ -69,9 +111,9 @@
 `uc 1 LATA7 1 0 :1:7 
 ]
 "792
-[u S32 . 1 `S23 1 . 1 0 ]
-[v _LATAbits LATAbits `VES32  1 e 1 @22 ]
-[s S157 . 1 `uc 1 LATB0 1 0 :1:0 
+[u S219 . 1 `S210 1 . 1 0 ]
+[v _LATAbits LATAbits `VES219  1 e 1 @22 ]
+[s S469 . 1 `uc 1 LATB0 1 0 :1:0 
 `uc 1 LATB1 1 0 :1:1 
 `uc 1 LATB2 1 0 :1:2 
 `uc 1 LATB3 1 0 :1:3 
@@ -81,60 +123,239 @@
 `uc 1 LATB7 1 0 :1:7 
 ]
 "854
-[u S166 . 1 `S157 1 . 1 0 ]
-[v _LATBbits LATBbits `VES166  1 e 1 @23 ]
+[u S478 . 1 `S469 1 . 1 0 ]
+[v _LATBbits LATBbits `VES478  1 e 1 @23 ]
 "899
 [v _LATC LATC `VEuc  1 e 1 @24 ]
+"9124
+[v _PR2 PR2 `VEuc  1 e 1 @653 ]
+[s S382 . 1 `uc 1 OUTPS 1 0 :4:0 
+`uc 1 CKPS 1 0 :3:4 
+`uc 1 ON 1 0 :1:7 
+]
+"9193
+[s S386 . 1 `uc 1 T2OUTPS 1 0 :4:0 
+`uc 1 T2CKPS 1 0 :3:4 
+`uc 1 T2ON 1 0 :1:7 
+]
+[s S390 . 1 `uc 1 T2OUTPS0 1 0 :1:0 
+`uc 1 T2OUTPS1 1 0 :1:1 
+`uc 1 T2OUTPS2 1 0 :1:2 
+`uc 1 T2OUTPS3 1 0 :1:3 
+`uc 1 T2CKPS0 1 0 :1:4 
+`uc 1 T2CKPS1 1 0 :1:5 
+`uc 1 T2CKPS2 1 0 :1:6 
+]
+[s S398 . 1 `uc 1 OUTPS0 1 0 :1:0 
+`uc 1 OUTPS1 1 0 :1:1 
+`uc 1 OUTPS2 1 0 :1:2 
+`uc 1 OUTPS3 1 0 :1:3 
+`uc 1 CKPS0 1 0 :1:4 
+`uc 1 CKPS1 1 0 :1:5 
+`uc 1 CKPS2 1 0 :1:6 
+`uc 1 TMR2ON 1 0 :1:7 
+]
+[u S407 . 1 `S382 1 . 1 0 `S386 1 . 1 0 `S390 1 . 1 0 `S398 1 . 1 0 ]
+[v _T2CONbits T2CONbits `VES407  1 e 1 @654 ]
+[s S348 . 1 `uc 1 CS 1 0 :4:0 
+]
+"9534
+[s S350 . 1 `uc 1 CS0 1 0 :1:0 
+`uc 1 CS1 1 0 :1:1 
+`uc 1 CS2 1 0 :1:2 
+`uc 1 CS3 1 0 :1:3 
+]
+[s S355 . 1 `uc 1 T2CS 1 0 :4:0 
+]
+[s S357 . 1 `uc 1 T2CS0 1 0 :1:0 
+`uc 1 T2CS1 1 0 :1:1 
+`uc 1 T2CS2 1 0 :1:2 
+`uc 1 T2CS3 1 0 :1:3 
+]
+[u S362 . 1 `S348 1 . 1 0 `S350 1 . 1 0 `S355 1 . 1 0 `S357 1 . 1 0 ]
+[v _T2CLKCONbits T2CLKCONbits `VES362  1 e 1 @656 ]
+[s S36 . 1 `uc 1 INTF 1 0 :1:0 
+`uc 1 . 1 0 :3:1 
+`uc 1 IOCIF 1 0 :1:4 
+`uc 1 TMR0IF 1 0 :1:5 
+]
+"21142
+[u S41 . 1 `S36 1 . 1 0 ]
+[v _PIR0bits PIR0bits `VES41  1 e 1 @1804 ]
+[s S54 . 1 `uc 1 TMR1IF 1 0 :1:0 
+`uc 1 TMR2IF 1 0 :1:1 
+`uc 1 TMR3IF 1 0 :1:2 
+`uc 1 TMR4IF 1 0 :1:3 
+`uc 1 TMR5IF 1 0 :1:4 
+`uc 1 TMR6IF 1 0 :1:5 
+]
+"21299
+[u S61 . 1 `S54 1 . 1 0 ]
+[v _PIR4bits PIR4bits `VES61  1 e 1 @1808 ]
+[s S526 . 1 `uc 1 INTE 1 0 :1:0 
+`uc 1 . 1 0 :3:1 
+`uc 1 IOCIE 1 0 :1:4 
+`uc 1 TMR0IE 1 0 :1:5 
+]
+"21564
+[u S531 . 1 `S526 1 . 1 0 ]
+[v _PIE0bits PIE0bits `VES531  1 e 1 @1814 ]
+[s S452 . 1 `uc 1 TMR1IE 1 0 :1:0 
+`uc 1 TMR2IE 1 0 :1:1 
+`uc 1 TMR3IE 1 0 :1:2 
+`uc 1 TMR4IE 1 0 :1:3 
+`uc 1 TMR5IE 1 0 :1:4 
+`uc 1 TMR6IE 1 0 :1:5 
+]
+"21721
+[u S459 . 1 `S452 1 . 1 0 ]
+[v _PIE4bits PIE4bits `VES459  1 e 1 @1818 ]
+[s S97 . 1 `uc 1 ANSA0 1 0 :1:0 
+`uc 1 ANSA1 1 0 :1:1 
+`uc 1 ANSA2 1 0 :1:2 
+`uc 1 ANSA3 1 0 :1:3 
+`uc 1 ANSA4 1 0 :1:4 
+`uc 1 ANSA5 1 0 :1:5 
+`uc 1 ANSA6 1 0 :1:6 
+`uc 1 ANSA7 1 0 :1:7 
+]
+"33008
+[u S106 . 1 `S97 1 . 1 0 ]
+"33008
+"33008
+[v _ANSELAbits ANSELAbits `VES106  1 e 1 @3896 ]
+[s S160 . 1 `uc 1 ANSB0 1 0 :1:0 
+`uc 1 ANSB1 1 0 :1:1 
+`uc 1 ANSB2 1 0 :1:2 
+`uc 1 ANSB3 1 0 :1:3 
+`uc 1 ANSB4 1 0 :1:4 
+`uc 1 ANSB5 1 0 :1:5 
+`uc 1 ANSB6 1 0 :1:6 
+`uc 1 ANSB7 1 0 :1:7 
+]
+"33628
+[u S169 . 1 `S160 1 . 1 0 ]
+"33628
+"33628
+[v _ANSELBbits ANSELBbits `VES169  1 e 1 @3907 ]
+[s S560 . 1 `uc 1 IOCBP0 1 0 :1:0 
+`uc 1 IOCBP1 1 0 :1:1 
+`uc 1 IOCBP2 1 0 :1:2 
+`uc 1 IOCBP3 1 0 :1:3 
+`uc 1 IOCBP4 1 0 :1:4 
+`uc 1 IOCBP5 1 0 :1:5 
+`uc 1 IOCBP6 1 0 :1:6 
+`uc 1 IOCBP7 1 0 :1:7 
+]
+"33938
+[u S569 . 1 `S560 1 . 1 0 ]
+"33938
+"33938
+[v _IOCBPbits IOCBPbits `VES569  1 e 1 @3912 ]
+[s S581 . 1 `uc 1 IOCBN0 1 0 :1:0 
+`uc 1 IOCBN1 1 0 :1:1 
+`uc 1 IOCBN2 1 0 :1:2 
+`uc 1 IOCBN3 1 0 :1:3 
+`uc 1 IOCBN4 1 0 :1:4 
+`uc 1 IOCBN5 1 0 :1:5 
+`uc 1 IOCBN6 1 0 :1:6 
+`uc 1 IOCBN7 1 0 :1:7 
+]
+"34000
+[u S590 . 1 `S581 1 . 1 0 ]
+"34000
+"34000
+[v _IOCBNbits IOCBNbits `VES590  1 e 1 @3913 ]
+[s S539 . 1 `uc 1 IOCBF0 1 0 :1:0 
+`uc 1 IOCBF1 1 0 :1:1 
+`uc 1 IOCBF2 1 0 :1:2 
+`uc 1 IOCBF3 1 0 :1:3 
+`uc 1 IOCBF4 1 0 :1:4 
+`uc 1 IOCBF5 1 0 :1:5 
+`uc 1 IOCBF6 1 0 :1:6 
+`uc 1 IOCBF7 1 0 :1:7 
+]
+"34062
+[u S548 . 1 `S539 1 . 1 0 ]
+"34062
+"34062
+[v _IOCBFbits IOCBFbits `VES548  1 e 1 @3914 ]
+[s S19 . 4 `VEuc 1 timeSlot 1 0 `VEuc 1 done 1 1 `VEi 1 encoder 2 2 ]
+"275 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\config.h
+[v _os os `VES19  1 e 4 0 ]
 "27 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
 [v _char_lookup char_lookup `[10]uc  1 s 10 char_lookup ]
 "28
 [v _characters characters `[4]uc  1 e 4 0 ]
-"23 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\main.c
+"29
+[v _segment segment `uc  1 e 1 0 ]
+"25 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"25
-[v main@cntr cntr `uc  1 a 1 12 ]
-"69
+"27
+[v main@cntr cntr `ui  1 a 2 8 ]
+"52
 } 0
-"71
+"76
 [v _system_init system_init `(v  1 e 1 0 ]
 {
-"98
+"113
 } 0
-"45 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
-[v _display_update display_update `T(v  1 e 1 0 ]
+"5 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\encoder.c
+[v _encoder_init encoder_init `(v  1 e 1 0 ]
 {
-[v display_update@segment segment `uc  1 a 1 wreg ]
-[v display_update@segment segment `uc  1 a 1 wreg ]
-"47
-[v display_update@segment segment `uc  1 a 1 2 ]
-"69
+"20
 } 0
-"30
+"31 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
+[v _display_init display_init `(v  1 e 1 0 ]
+{
+"55
+} 0
+"115 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\main.c
+[v _handle_relays handle_relays `(v  1 e 1 0 ]
+{
+"164
+} 0
+"57 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
 [v _display_set display_set `(v  1 e 1 0 ]
 {
-[v display_set@value value `ui  1 p 2 8 ]
-"43
+[v display_set@value value `ui  1 p 2 3 ]
+"70
 } 0
 "6 C:\Program Files (x86)\Microchip\xc8\v1.44\sources\common\lwmod.c
 [v ___lwmod __lwmod `(ui  1 e 2 0 ]
 {
 "11
-[v ___lwmod@counter counter `uc  1 a 1 5 ]
+[v ___lwmod@counter counter `uc  1 a 1 0 ]
 "6
-[v ___lwmod@divisor divisor `ui  1 p 2 0 ]
-[v ___lwmod@dividend dividend `ui  1 p 2 2 ]
+[v ___lwmod@divisor divisor `ui  1 p 2 4 ]
+[v ___lwmod@dividend dividend `ui  1 p 2 6 ]
 "26
 } 0
 "6 C:\Program Files (x86)\Microchip\xc8\v1.44\sources\common\lwdiv.c
 [v ___lwdiv __lwdiv `(ui  1 e 2 0 ]
 {
 "11
-[v ___lwdiv@quotient quotient `ui  1 a 2 5 ]
+[v ___lwdiv@quotient quotient `ui  1 a 2 0 ]
 "12
-[v ___lwdiv@counter counter `uc  1 a 1 7 ]
+[v ___lwdiv@counter counter `uc  1 a 1 2 ]
 "6
-[v ___lwdiv@divisor divisor `ui  1 p 2 0 ]
-[v ___lwdiv@dividend dividend `ui  1 p 2 2 ]
+[v ___lwdiv@divisor divisor `ui  1 p 2 4 ]
+[v ___lwdiv@dividend dividend `ui  1 p 2 6 ]
 "31
+} 0
+"55 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\main.c
+[v __isr _isr `II(v  1 e 1 0 ]
+{
+"74
+} 0
+"22 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\encoder.c
+[v _encoder_isr encoder_isr `T(v  1 e 1 0 ]
+{
+"109
+} 0
+"72 C:\Users\luke\OneDrive\EmbeddedSystems\MPLAB\InverterController\display.c
+[v _display_update display_update `T(v  1 e 1 0 ]
+{
+"98
 } 0

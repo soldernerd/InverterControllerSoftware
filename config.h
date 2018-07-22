@@ -62,8 +62,8 @@
 
 #define PIN_INPUT           1
 #define PIN_OUTPUT          0
-#define PIN_DIGITAL         1
-#define PIN_ANALOG          0
+#define PIN_DIGITAL         0
+#define PIN_ANALOG          1
 
 #define RELAY1_TRIS TRISAbits.TRISA1
 #define RELAY1_PIN LATAbits.LATA1
@@ -74,14 +74,21 @@
 #define RELAY3_TRIS TRISAbits.TRISA0
 #define RELAY3_PIN LATAbits.LATA0
 
+#define RELAY_SPEED RELAY3_PIN
+#define RELAY_FORWARD RELAY1_PIN
+#define RELAY_REVERSE RELAY2_PIN
+
 #define EXTERNAL_ENABLE_TRIS TRISAbits.TRISA3
+#define EXTERNAL_ENABLE_ANSEL ANSELAbits.ANSA3
 #define EXTERNAL_ENABLE_PIN PORTAbits.RA3
 
 #define EXTERNAL_SPINDLE_TRIS TRISAbits.TRISA4
+#define EXTERNAL_SPINDLE_ANSEL ANSELAbits.ANSA4
 #define EXTERNAL_SPINDLE_PIN PORTAbits.RA4
 
-#define EXTERNAL_REVERSE_TRIS TRISAbits.TRISA4
-#define EXTERNAL_REVERSE_PIN PORTAbits.RA4
+#define EXTERNAL_REVERSE_TRIS TRISAbits.TRISA5
+#define EXTERNAL_REVERSE_ANSEL ANSELAbits.ANSA5
+#define EXTERNAL_REVERSE_PIN PORTAbits.RA5
 
 #define DISPLAY_A_TRIS TRISCbits.TRISC2
 #define DISPLAY_A_PIN LATCbits.RC2
@@ -120,16 +127,26 @@
 #define DISPLAY_SEG4_PIN LATBbits.LATB4
 
 #define FORWARD_TRIS TRISBbits.TRISB0
+#define FORWARD_ANSEL ANSELBbits.ANSB0
 #define FORWARD_PIN PORTBbits.RB0
 
 #define REVERSE_TRIS TRISBbits.TRISB3
+#define REVERSE_ANSEL ANSELBbits.ANSB3
 #define REVERSE_PIN PORTBbits.RB3
 
 #define ENCODER_A_TRIS TRISBbits.TRISB2
+#define ENCODER_A_ANSEL ANSELBbits.ANSB2
 #define ENCODER_A_PIN PORTBbits.RB2
+#define ENCODER_A_IOC_RISING IOCBPbits.IOCBP2
+#define ENCODER_A_IOC_FALLING IOCBNbits.IOCBN2
+#define ENCODER_A_IOC_FLAG IOCBFbits.IOCBF2
 
 #define ENCODER_B_TRIS TRISBbits.TRISB1
+#define ENCODER_B_ANSEL ANSELBbits.ANSB1
 #define ENCODER_B_PIN PORTBbits.RB1
+#define ENCODER_B_IOC_RISING IOCBPbits.IOCBP1
+#define ENCODER_B_IOC_FALLING IOCBNbits.IOCBN1
+#define ENCODER_B_IOC_FLAG IOCBFbits.IOCBF1
 
 
 //#define TEMPERATURE_TRIS TRISAbits.TRISA0
@@ -242,27 +259,20 @@
 //    DISPLAY_STATE_MANUAL_BUSY = 0x84,
 //    DISPLAY_STATE_ENCODER_TEST = 0xF0
 //} displayState_t;
-//
-//typedef struct
-//{
-//    volatile uint8_t subTimeSlot;
-//    volatile uint8_t timeSlot;
-//    volatile uint8_t done;
-//    volatile int8_t encoder1Count;
-//    volatile int8_t button1;
-//    volatile int8_t encoder2Count;
-//    volatile int8_t button2;
-//    volatile uint16_t current_position;
-//    displayState_t displayState;
-//    uint8_t busy;
-//} os_t;
+
+typedef struct
+{
+    volatile uint8_t timeSlot;
+    volatile uint8_t done;
+    volatile int16_t encoder;
+} os_t;
 
 
 /*
  * Global variables
  */
 
-//os_t os;
+os_t os;
 
 
 /*

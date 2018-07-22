@@ -11,8 +11,9 @@
 #include <xc.h>
 #include <stdint.h>
 
+void display_init(void);
 void display_set(uint16_t value);
-inline void display_update(uint8_t segment);
+inline void display_update();
 
 #endif	/* DISPLAY_H */
 

@@ -19,28 +19,47 @@
  * Function prototypes
  */
 
-void system_init(void);
-void handle_relays(void);
+static void _system_init(void);
+static void _handle_relays(void);
+static void _calculate_speed(void);
+
 
 void main(void)
 { 
     uint16_t cntr;
-    system_init();
-    os.encoder = 5000;
+    _system_init();
+    os.encoder = 0;
+    os.encoder_last = 0;
+    os.encoder_difference = 0;
+    
 
     while(1)
     {
         if(!os.done)
         { 
-            handle_relays();
+            _handle_relays();
             
+            if(os.ready)
+            {
+                _calculate_speed();
+                os.ready = 0;
+                
+                //Update display
+                if(os.speed>0)
+                {
+                    display_set((uint16_t) os.speed);
+                }
+                else
+                {
+                    display_set((uint16_t) -os.speed);
+                }
+            }
+
             //Run periodic tasks
             switch(os.timeSlot&0b00001111)
             {       
                 case 0: 
                     ++cntr;
-                    //display_set(cntr);
-                    display_set((uint16_t) os.encoder);
                     break;
                 case 8:
                     break;
@@ -55,9 +74,20 @@ void main(void)
 void interrupt _isr(void)
 {
     //Interrupt on change: Encoder
-    if(PIR0bits.IOCIF)
+//    if(PIR0bits.IOCIF)
+//    {
+//        encoder_isr();
+//    }
+    
+    if(PIR6bits.CCP1IF || PIR6bits.CCP2IF)
     {
-        encoder_isr();
+        capture_isr();
+    }
+    
+    //Timer1 interrupt: Encoder
+    if(PIR4bits.TMR1IF)
+    {
+        timer_1_isr();
     }
     
     //Timer2 interrupt: Display
@@ -73,7 +103,7 @@ void interrupt _isr(void)
     }
 }
 
-void system_init(void)
+static void _system_init(void)
 {
     RELAY1_TRIS = PIN_OUTPUT;
     RELAY2_TRIS = PIN_OUTPUT;
@@ -103,16 +133,23 @@ void system_init(void)
     FORWARD_ANSEL = PIN_DIGITAL;
     REVERSE_TRIS = PIN_INPUT;
     REVERSE_ANSEL = PIN_DIGITAL;
+    
     ENCODER_A_TRIS = PIN_INPUT;
     ENCODER_A_ANSEL = PIN_DIGITAL;
     ENCODER_B_TRIS = PIN_INPUT;
     ENCODER_B_ANSEL = PIN_DIGITAL;
     
+    PPSUnLock();
+    CCP1PPS = ENCODER_A_PPS_VALUE;
+    CCP2PPS = ENCODER_B_PPS_VALUE;
+    PPSLock();
+    
     display_init();
     encoder_init();
+    
 }
 
-void handle_relays(void)
+static void _handle_relays(void)
 {
     if(EXTERNAL_ENABLE_PIN)
     {
@@ -163,3 +200,31 @@ void handle_relays(void)
     }
 }
 
+static void _calculate_speed(void)
+{
+    uint32_t distance;
+    uint32_t time_difference;
+    float speed;
+
+    if(os.encoder_difference>64)
+    {
+        distance = (uint32_t) os.encoder_difference;
+        distance *= 60; //Seconds per minute
+
+        time_difference = os.time_sum - os.time_sum_last;
+        //Account for averaging
+        time_difference += 16;
+        time_difference >>= 5; 
+
+        speed = (float) distance;
+        speed /= time_difference;
+        speed /= 256; //Pulses per rotation
+        speed *= 8000000.0; //Timer frequency
+
+        os.speed = (int32_t) speed;  
+    }
+    else
+    {
+        os.speed = 0;
+    }
+}

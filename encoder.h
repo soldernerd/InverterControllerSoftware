@@ -14,7 +14,11 @@
 #define INVERSE_DIRECTION
 
 void encoder_init(void);
+void timer_init(void);
+inline void timer_1_isr(void);
 inline void encoder_isr(void);
+inline void capture_isr(void);
+
 
 
 

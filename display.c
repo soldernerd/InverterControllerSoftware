@@ -13,6 +13,7 @@
 #define SEG_POINT 0b01000000
 #define SEG_BOTTOMRIGHT 0b10000000
 
+#define CHAR_NONE 0x00
 #define CHAR_0 (SEG_TOP | SEG_TOPRIGHT | SEG_TOPLEFT | SEG_BOTTOMLEFT | SEG_BOTTOM | SEG_BOTTOMRIGHT)
 #define CHAR_1 (SEG_TOPRIGHT | SEG_BOTTOMRIGHT)
 #define CHAR_2 (SEG_TOP | SEG_TOPRIGHT | SEG_CENTER | SEG_BOTTOMLEFT | SEG_BOTTOM)
@@ -54,22 +55,70 @@ void display_init(void)
     T2CONbits.ON = 1;
 }
 
-void display_set(uint16_t value)
+void display_set(int16_t value, uint8_t decimal_flags)
 {
-    //Character 4
-    characters[3] = char_lookup[value%10];
-    //Character 3
-    value /= 10;
-    characters[2] = char_lookup[value%10];
-    //Character 2
-    value /= 10;
-    characters[1] = char_lookup[value%10];
-    //Character 1
-    value /= 10;
-    characters[0] = char_lookup[value%10];
+    uint16_t abs_value;
+    uint8_t temp_chars[4];
+    
+    if(value<0)
+    {
+        abs_value = -value;
+    }
+    else
+    {
+        abs_value = value;
+    }
+    
+    //Empty display
+    temp_chars[3] = CHAR_NONE;
+    temp_chars[2] = CHAR_NONE;
+    temp_chars[1] = CHAR_NONE;
+    temp_chars[0] = CHAR_NONE;
+    
+    // 4th digit
+    temp_chars[3] = char_lookup[abs_value%10];
+    abs_value /= 10;
+    if(abs_value)
+    {
+        temp_chars[2] = char_lookup[abs_value%10];
+        abs_value /= 10;
+        if(abs_value)
+        {
+            temp_chars[1] = char_lookup[abs_value%10];
+            abs_value /= 10;
+            if(abs_value)
+            {
+                temp_chars[0] = char_lookup[abs_value%10];
+            }
+        }
+    }
+
+    //Use last decimal point as minus sign
+    if(value<0 || (decimal_flags&DECIMAL_3))
+    {
+        temp_chars[3] |= SEG_POINT;
+    }
+    if(decimal_flags & DECIMAL_2)
+    {
+        temp_chars[2] |= SEG_POINT;
+    }
+    if(decimal_flags & DECIMAL_1)
+    {
+        temp_chars[1] |= SEG_POINT;
+    }
+    if(decimal_flags & DECIMAL_0)
+    {
+        temp_chars[0] |= SEG_POINT;
+    }
+    
+    //Copy values
+    characters[0] = temp_chars[0];
+    characters[1] = temp_chars[1];
+    characters[2] = temp_chars[2];
+    characters[3] = temp_chars[3];
 }
 
-inline void display_update()
+inline void display_isr(void)
 {
     DISPLAY_SEG1_PIN = 1;
     DISPLAY_SEG2_PIN = 1;
@@ -95,4 +144,7 @@ inline void display_update()
     }
     
     ++segment;
+    
+    //Clear interrupt flag
+    PIR4bits.TMR2IF = 0;
 }

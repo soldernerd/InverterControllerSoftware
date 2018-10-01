@@ -26,80 +26,56 @@ static void _calculate_speed(void);
 
 void main(void)
 { 
-    uint16_t cntr;
     _system_init();
-    os.encoder = 0;
-    os.encoder_last = 0;
-    os.encoder_difference = 0;
-    
 
     while(1)
     {
-        if(!os.done)
-        { 
-            _handle_relays();
-            
-            if(os.ready)
-            {
-                _calculate_speed();
-                os.ready = 0;
-                
-                //Update display
-                if(os.speed>0)
-                {
-                    display_set((uint16_t) os.speed);
-                }
-                else
-                {
-                    display_set((uint16_t) -os.speed);
-                }
-            }
+        _handle_relays();
 
-            //Run periodic tasks
-            switch(os.timeSlot&0b00001111)
-            {       
-                case 0: 
-                    ++cntr;
-                    break;
-                case 8:
-                    break;
+        if(os.ready)
+        {
+            _calculate_speed();
+            os.ready = 0;
+
+            //Update display
+            if(EXTERNAL_ENABLE_PIN)
+            {
+                display_set(os.speed, DECIMAL_0);
             }
-            os.done = 1;
+            else
+            {
+                display_set(os.speed, 0x00);
+            }
         }
     }//end while(1)
     
 }//end main
 
 
-void interrupt _isr(void)
+void __interrupt() _isr(void)
 {
-    //Interrupt on change: Encoder
-//    if(PIR0bits.IOCIF)
-//    {
-//        encoder_isr();
-//    }
-    
-    if(PIR6bits.CCP1IF || PIR6bits.CCP2IF)
-    {
-        capture_isr();
-    }
-    
-    //Timer1 interrupt: Encoder
+    //Timer1 interrupt: Measurements
     if(PIR4bits.TMR1IF)
     {
         timer_1_isr();
     }
     
-    //Timer2 interrupt: Display
+    //Encoder A signal changed
+    if(PIR6bits.CCP1IF)
+    {
+        capture_A_isr();
+    }
+    
+    //Encoder B signal changed
+    if(PIR6bits.CCP2IF)
+    {
+        capture_B_isr();
+    }
+
+    //Timer2 interrupt: Display update
     if(PIR4bits.TMR2IF)
     {
-        //Update display
-        display_update();
-        //Update timeslot and clear done flag
-        ++os.timeSlot;
-        os.done = 0;
-        //Clear interrupt flag
-        PIR4bits.TMR2IF = 0;
+        display_isr();
     }
 }
 
@@ -159,12 +135,12 @@ static void _handle_relays(void)
         if(EXTERNAL_SPINDLE_PIN)
         {
             //Take care of forward/reverse relays
-            if(EXTERNAL_REVERSE_PIN)
+            if(EXTERNAL_REVERSE_PIN && (os.speed<30))
             {
                 RELAY_FORWARD = 0;
                 RELAY_REVERSE = 1;
             }
-            else
+            else if((!EXTERNAL_REVERSE_PIN) && (os.speed>-30))
             {
                 RELAY_REVERSE = 0; 
                 RELAY_FORWARD = 1;
@@ -180,14 +156,14 @@ static void _handle_relays(void)
     else
     {
         //We are in local control mode
-        //Use external speed signal
+        //Use local speed signal from pot
         RELAY_SPEED = 0;
-        if(FORWARD_PIN)
+        if(FORWARD_PIN && (os.speed>-30))
         {
             RELAY_REVERSE = 0; 
             RELAY_FORWARD = 1;
         }
-        else if(REVERSE_PIN)
+        else if(REVERSE_PIN && (os.speed<30))
         {
             RELAY_FORWARD = 0;
             RELAY_REVERSE = 1;
@@ -202,29 +178,27 @@ static void _handle_relays(void)
 
 static void _calculate_speed(void)
 {
-    uint32_t distance;
+    int32_t distance;
     uint32_t time_difference;
     float speed;
-
-    if(os.encoder_difference>64)
+    
+    if((os.time_sum_last==0) || (os.time_sum==0))
     {
-        distance = (uint32_t) os.encoder_difference;
-        distance *= 60; //Seconds per minute
-
-        time_difference = os.time_sum - os.time_sum_last;
-        //Account for averaging
-        time_difference += 16;
-        time_difference >>= 5; 
-
-        speed = (float) distance;
-        speed /= time_difference;
-        speed /= 256; //Pulses per rotation
-        speed *= 8000000.0; //Timer frequency
-
-        os.speed = (int32_t) speed;  
+        //Time measurements cannot be trusted
+        time_difference = 67108864; //2^16 * 32 * 32
     }
     else
     {
-        os.speed = 0;
+        //Use captured time
+        time_difference = os.time_sum - os.time_sum_last;
     }
+
+    distance = (uint32_t) os.encoder_difference;
+    distance *= 60; //Seconds per minute
+    speed = (float) distance;
+    speed /= time_difference;
+    speed /= 256; //Pulses per rotation
+    speed *= 32; //Averaging
+    speed *= 8000000.0; //Timer frequency
+    os.speed = (int16_t) speed;  
 }

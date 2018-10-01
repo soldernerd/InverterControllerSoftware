@@ -16,8 +16,8 @@
 void encoder_init(void);
 void timer_init(void);
 inline void timer_1_isr(void);
-inline void encoder_isr(void);
-inline void capture_isr(void);
+inline void capture_A_isr(void);
+inline void capture_B_isr(void);
 
 
 

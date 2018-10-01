@@ -2,13 +2,21 @@
 #include "encoder.h"
 #include "config.h"
 
-uint16_t timer_value;
 uint32_t time;
-uint16_t rollover_cnt;
+uint8_t rollover_cnt;
 
 void encoder_init(void)
 {
     rollover_cnt = 0;
+    
+    os.encoder = 0;
+    os.encoder_last = 0;
+    os.encoder_difference = 0;
+    os.capture = 0;
+    os.ready = 0;
+    os.time_sum_last = 0;
+    os.time_sum = 0;
+    os.speed = 0;
     
     //Configure timer1
     T1CLKbits.CS = 0b0001; //Clock Source = Fosc/4, i.e 8 MHz
@@ -44,26 +52,35 @@ inline void timer_1_isr(void)
 {
     ++rollover_cnt;
     
-    //Take care of encoder difference
+    //Time for next measurement
     if((rollover_cnt&0b11111) == 0)
     {
+        //Correct for rollover
+        if(rollover_cnt==0)
+        {
+            os.time_sum -= 536870912; //(256*32)<<16
+        }
         //Record number of pulses since last observation
         os.encoder_difference = os.encoder - os.encoder_last;
         os.encoder_last = os.encoder;
-        //Capture time if there are at least 60RPM
-        if(os.encoder_difference>64)
+        //Capture time
+        os.capture = 32;  
+        os.time_sum_last = os.time_sum;
+        os.time_sum = 0;
+    }
+    
+    
+    //Check if there is still an measurement in progress
+    if((rollover_cnt&0b11111) == 0b11111)
+    {
+        //Cancel any ongoing measurement
+        if(os.capture!=0)
         {
-            os.capture = 32;  
-            os.time_sum_last = os.time_sum;
+            //Stop capturing time data
+            os.capture = 0;
+            //Indicate that the current time_sum is invalid
             os.time_sum = 0;
-        }
-        else
-        {
-            //Just prepare for the next time
-            os.time_sum = rollover_cnt;
-            os.time_sum <<= 16;
-            os.time_sum <<= 5;
-            //Already done
+            //Indicate that new data is available
             os.ready = 1;
         }
     }
@@ -72,131 +89,129 @@ inline void timer_1_isr(void)
     PIR4bits.TMR1IF = 0;
 }
 
-inline void capture_isr(void)
+inline void capture_A_isr(void)
 {
-    if(PIR6bits.CCP1IF)
+    //Capture time if necessary
+    if(os.capture)
     {
-        //Capture time if necessary
-        if(os.capture)
+        //Calculate 32-bit time
+        time = rollover_cnt;
+        time <<= 8;
+        time |= CCPR1H;
+        time <<= 8;
+        time |= CCPR1L;
+        //Add time to time sum
+        os.time_sum += time;
+        //Decrement counter
+        --os.capture;
+        //Set ready flag if we are done
+        if(os.capture==0)
         {
-            //Calculate 32-bit time
-            time = rollover_cnt;
-            time <<= 8;
-            time |= CCPR1H;
-            time <<= 8;
-            time |= CCPR1L;
-            //Add time to time sum
-            os.time_sum += time;
-            //Decrement counter
-            --os.capture;
-            //Set ready flag if we are done
-            if(os.capture==0)
-            {
-                os.ready = 1;
-            }
+            os.ready = 1;
         }
-        
-        if(ENCODER_A_PIN)
-        {
-            if(ENCODER_B_PIN)
-            {
-                #ifdef INVERSE_DIRECTION
-                    ++os.encoder;
-                #else
-                    --os.encoder;
-                #endif
-            }
-            else
-            {
-                #ifdef INVERSE_DIRECTION
-                    --os.encoder;
-                #else
-                    ++os.encoder;
-                #endif
-            }
-        }
-        else
-        {
-            if(ENCODER_B_PIN)
-            {
-                #ifdef INVERSE_DIRECTION
-                    --os.encoder;
-                #else
-                    ++os.encoder;
-                #endif
-            }
-            else
-            {
-                #ifdef INVERSE_DIRECTION
-                    ++os.encoder;
-                #else
-                    --os.encoder;
-                #endif
-            }
-        }
-        PIR6bits.CCP1IF = 0;
     }
-    
-    if(PIR6bits.CCP2IF)
+
+    if(ENCODER_A_PIN)
     {
-        //Capture time if necessary
-        if(os.capture)
-        {
-            //Calculate 32-bit time
-            time = rollover_cnt;
-            time <<= 8;
-            time |= CCPR2H;
-            time <<= 8;
-            time |= CCPR2L;
-            //Add time to time sum
-            os.time_sum += time;
-            //Decrement counter
-            --os.capture;
-            //Set ready flag if we are done
-            if(os.capture==0)
-            {
-                os.ready = 1;
-            }
-        }
-        
         if(ENCODER_B_PIN)
         {
-            if(ENCODER_A_PIN)
-            {
-                #ifdef INVERSE_DIRECTION
-                    --os.encoder;
-                #else
-                    ++os.encoder;
-                #endif
-            }
-            else
-            {
-                #ifdef INVERSE_DIRECTION
-                    ++os.encoder;
-                #else
-                    --os.encoder;
-                #endif
-            }
+            #ifdef INVERSE_DIRECTION
+                ++os.encoder;
+            #else
+                --os.encoder;
+            #endif
         }
         else
         {
-            if(ENCODER_A_PIN)
-            {
-                #ifdef INVERSE_DIRECTION
-                    ++os.encoder;
-                #else
-                    --os.encoder;
-                #endif
-            }
-            else
-            {
-                #ifdef INVERSE_DIRECTION
-                    --os.encoder;
-                #else
-                    ++os.encoder;
-                #endif
-            }
+            #ifdef INVERSE_DIRECTION
+                --os.encoder;
+            #else
+                ++os.encoder;
+            #endif
         }
-        PIR6bits.CCP2IF = 0;
     }
+    else
+    {
+        if(ENCODER_B_PIN)
+        {
+            #ifdef INVERSE_DIRECTION
+                --os.encoder;
+            #else
+                ++os.encoder;
+            #endif
+        }
+        else
+        {
+            #ifdef INVERSE_DIRECTION
+                ++os.encoder;
+            #else
+                --os.encoder;
+            #endif
+        }
+    }
+    PIR6bits.CCP1IF = 0;
+}
+ 
+
+inline void capture_B_isr(void)
+{
+    //Capture time if necessary
+    if(os.capture)
+    {
+        //Calculate 32-bit time
+        time = rollover_cnt;
+        time <<= 8;
+        time |= CCPR2H;
+        time <<= 8;
+        time |= CCPR2L;
+        //Add time to time sum
+        os.time_sum += time;
+        //Decrement counter
+        --os.capture;
+        //Set ready flag if we are done
+        if(os.capture==0)
+        {
+            os.ready = 1;
+        }
+    }
+
+    if(ENCODER_B_PIN)
+    {
+        if(ENCODER_A_PIN)
+        {
+            #ifdef INVERSE_DIRECTION
+                --os.encoder;
+            #else
+                ++os.encoder;
+            #endif
+        }
+        else
+        {
+            #ifdef INVERSE_DIRECTION
+                ++os.encoder;
+            #else
+                --os.encoder;
+            #endif
+        }
+    }
+    else
+    {
+        if(ENCODER_A_PIN)
+        {
+            #ifdef INVERSE_DIRECTION
+                ++os.encoder;
+            #else
+                --os.encoder;
+            #endif
+        }
+        else
+        {
+            #ifdef INVERSE_DIRECTION
+                --os.encoder;
+            #else
+                ++os.encoder;
+            #endif
+        }
+    }
+    PIR6bits.CCP2IF = 0;
 }

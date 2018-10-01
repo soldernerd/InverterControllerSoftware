@@ -157,19 +157,14 @@
 
 typedef struct
 {
-    volatile uint8_t timeSlot;
-    volatile uint8_t done;
     volatile int16_t encoder;
     volatile int16_t encoder_last;
     volatile int16_t encoder_difference;
     volatile uint8_t capture;
-    volatile uint32_t time_last;
-    volatile uint32_t time_difference;
     volatile uint8_t ready;
     volatile uint32_t time_sum_last;
     volatile uint32_t time_sum;
     int16_t speed;
-    
 } os_t;
 
 

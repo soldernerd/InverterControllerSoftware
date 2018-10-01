@@ -11,9 +11,14 @@
 #include <xc.h>
 #include <stdint.h>
 
+#define DECIMAL_0 0b00000001
+#define DECIMAL_1 0b00000010
+#define DECIMAL_2 0b00000100
+#define DECIMAL_3 0b00001000
+
 void display_init(void);
-void display_set(uint16_t value);
-inline void display_update();
+void display_set(int16_t value, uint8_t decimal_flags);
+inline void display_isr(void);
 
 #endif	/* DISPLAY_H */
 

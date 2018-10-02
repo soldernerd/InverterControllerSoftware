@@ -27,6 +27,8 @@ static void _calculate_speed(void);
 void main(void)
 { 
     _system_init();
+    
+    display_startup();
 
     while(1)
     {
@@ -194,11 +196,12 @@ static void _calculate_speed(void)
     }
 
     distance = (uint32_t) os.encoder_difference;
-    distance *= 60; //Seconds per minute
+    //distance *= 60; //Seconds per minute
     speed = (float) distance;
     speed /= time_difference;
-    speed /= 256; //Pulses per rotation
-    speed *= 32; //Averaging
-    speed *= 8000000.0; //Timer frequency
+    //speed /= 256; //Pulses per rotation
+    //speed *= 32; //Averaging
+    //speed *= 8000000.0; //Timer frequency
+    speed *= 60000000; // 60 seconds per minute * 32 measurements * 8000000 timer frequency / 256 pulses per rotation
     os.speed = (int16_t) speed;  
 }

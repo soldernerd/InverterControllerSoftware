@@ -25,9 +25,14 @@
 #define CHAR_8 (SEG_TOP | SEG_TOPRIGHT | SEG_TOPLEFT | SEG_BOTTOMLEFT | SEG_BOTTOM | SEG_BOTTOMRIGHT | SEG_CENTER)
 #define CHAR_9 (SEG_TOP | SEG_TOPRIGHT | SEG_TOPLEFT | SEG_BOTTOM | SEG_BOTTOMRIGHT | SEG_CENTER)
 
+#define CHAR_H (SEG_TOPRIGHT | SEG_TOPLEFT | SEG_BOTTOMLEFT | SEG_BOTTOMRIGHT | SEG_CENTER)
+#define CHAR_E (SEG_TOP | SEG_TOPLEFT | SEG_BOTTOMLEFT | SEG_BOTTOM | SEG_CENTER)
+#define CHAR_L (SEG_TOPLEFT | SEG_BOTTOMLEFT | SEG_BOTTOM)
+#define CHAR_O (SEG_TOP | SEG_TOPRIGHT | SEG_TOPLEFT | SEG_BOTTOMLEFT | SEG_BOTTOM | SEG_BOTTOMRIGHT)
+
 static uint8_t char_lookup[10] = {CHAR_0, CHAR_1, CHAR_2, CHAR_3, CHAR_4, CHAR_5, CHAR_6, CHAR_7, CHAR_8, CHAR_9};
 uint8_t characters[4];
-uint8_t segment;
+volatile uint8_t segment;
 
 void display_init(void)
 {
@@ -147,4 +152,44 @@ inline void display_isr(void)
     
     //Clear interrupt flag
     PIR4bits.TMR2IF = 0;
+}
+
+void display_startup(void)
+{
+    uint8_t last_value;
+    uint8_t position;
+    uint16_t cntr;
+    
+    char tmp[12];
+    tmp[0] = CHAR_NONE;
+    tmp[1] = CHAR_NONE;
+    tmp[2] = CHAR_NONE;
+    tmp[3] = CHAR_H;
+    tmp[4] = CHAR_E;
+    tmp[5] = CHAR_L;
+    tmp[6] = CHAR_L;
+    tmp[7] = CHAR_O;
+    tmp[8] = CHAR_NONE;
+    tmp[9] = CHAR_NONE;
+    tmp[10] = CHAR_NONE;
+    tmp[11] = CHAR_NONE;
+
+    for(position=0; position<9; ++position)
+    {
+        characters[0] = tmp[position+0];
+        characters[1] = tmp[position+1];
+        characters[2] = tmp[position+2];
+        characters[3] = tmp[position+3];
+        
+        cntr = 0;
+        last_value = segment;
+        while(cntr<200)
+        {
+            if(segment!=last_value)
+            {
+                ++cntr;
+                last_value = segment;
+            }
+        }
+    }
 }

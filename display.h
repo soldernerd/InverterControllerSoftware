@@ -19,6 +19,7 @@
 void display_init(void);
 void display_set(int16_t value, uint8_t decimal_flags);
 inline void display_isr(void);
+void display_startup(void);
 
 #endif	/* DISPLAY_H */
 
